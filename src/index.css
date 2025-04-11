@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Light theme scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #16a34a;
+  border: 1px solid #16a34a;
+}
+
+/* Dark theme scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #000;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #00FF00;
+  border: 1px solid #00FF00;
+}
