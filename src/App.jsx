@@ -12,7 +12,7 @@ import {
   writeBatch,
   getDocs,
 } from "firebase/firestore";
-import { ThemeToggle } from "./components/ThemeToggle";
+import { NavBar } from "./components/layout/NavBar";
 import { ProgressBar } from "./components/ProgressBar";
 import { TodoItem } from "./components/TodoItem";
 import { AddTodoForm } from "./components/AddTodoForm";
@@ -82,7 +82,7 @@ const TodoApp = () => {
     if (!user) return;
     try {
       await addDoc(collection(db, `users/${user.uid}/tasks`), {
-        text: text.trim().toUpperCase(),
+        text: text.trim(),
         completed: false,
         createdAt: new Date().toISOString(),
       });
@@ -164,7 +164,7 @@ const TodoApp = () => {
     try {
       const taskRef = doc(db, `users/${user.uid}/tasks/${editing}`);
       await updateDoc(taskRef, {
-        text: editText.trim().toUpperCase()
+        text: editText.trim()
       });
       setEditing(null);
       setEditText('');
@@ -190,7 +190,7 @@ const TodoApp = () => {
               hover:bg-gray-800 hover:text-white
               dark:hover:bg-terminal-green dark:hover:text-black"
           >
-            SIGN IN WITH GOOGLE
+            Sign in with Google
           </button>
           <div className="mt-6">
             <PWAInstall />
@@ -206,19 +206,10 @@ const TodoApp = () => {
       totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 10) : 0;
 
     return (
-      <div className="min-h-screen bg-white dark:bg-black transition-colors">
-        <ThemeToggle />
+      <div className="min-h-screen bg-white dark:bg-black transition-colors pt-14">
+        <NavBar user={user} onSignOut={() => auth.signOut()} />
         <div className="p-6 pb-24 font-mono text-gray-800 dark:text-terminal-green">
           <div className="max-w-md mx-auto px-4 sm:px-6">
-            <div className="flex items-center justify-between mb-8 pr-10">
-              <div className="text-xs opacity-50">Hey {user.displayName ? user.displayName.split(' ')[0].charAt(0).toUpperCase() + user.displayName.split(' ')[0].slice(1) : user.email}! 👋</div>
-              <button
-                onClick={() => auth.signOut()}
-                className="text-xs opacity-50 hover:opacity-100"
-              >
-                [SIGN OUT]
-              </button>
-            </div>
 
             <ProgressBar progress={progress} />
 
@@ -242,13 +233,13 @@ const TodoApp = () => {
                       onClick={handleEditSave}
                       className="text-xs text-gray-800 dark:text-terminal-green opacity-70 hover:opacity-100"
                     >
-                      SAVE
+                      Save
                     </button>
                     <button 
                       onClick={handleEditCancel}
                       className="text-xs text-gray-800 dark:text-terminal-green opacity-70 hover:opacity-100"
                     >
-                      CANCEL
+                      Cancel
                     </button>
                   </div>
                 ) : (
@@ -269,7 +260,7 @@ const TodoApp = () => {
                 : "opacity-50 hover:opacity-100"
             } text-gray-800 dark:text-terminal-green`}
           >
-            {isResetting ? "[RESETTING...]" : "[CLEAR COMPLETED]"}
+            {isResetting ? "[Resetting...]" : "[Clear completed]"}
           </button>
         </div>
       </div>

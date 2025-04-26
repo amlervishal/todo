@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
+  // Set default theme to light mode (isDark=false)
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {

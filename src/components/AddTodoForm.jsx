@@ -16,7 +16,7 @@ export const AddTodoForm = ({ onAdd }) => {
         type="text"
         value={newTask}
         onChange={(e) => setNewTask(e.target.value)}
-        placeholder="ADD TASK"
+        placeholder="Add task"
         className="w-full bg-transparent border-none outline-none 
           text-gray-800 dark:text-terminal-green 
           placeholder-gray-400 dark:placeholder-terminal-green/50"
