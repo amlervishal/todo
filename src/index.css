@@ -8,24 +8,26 @@ body {
 
 /* Light theme scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #fff;
+  background: transparent;
+  margin: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #16a34a;
-  border: 1px solid #16a34a;
+  background: rgba(120, 120, 120, 0.7);
+  border-radius: 10px;
 }
 
 /* Dark theme scrollbar */
 .dark ::-webkit-scrollbar-track {
-  background: #000;
+  background: transparent;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #00FF00;
-  border: 1px solid #00FF00;
+  background: rgba(0, 255, 0, 0.3);
+  border-radius: 10px;
 }

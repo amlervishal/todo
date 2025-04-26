@@ -25,6 +25,8 @@ const TodoApp = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [isResetting, setIsResetting] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [editText, setEditText] = useState('');
 
   // ... keep all useEffect and handler functions exactly the same ...
   useEffect(() => {
@@ -142,6 +144,36 @@ const TodoApp = () => {
       setError("Failed to sign in. Please try again.");
     }
   };
+  
+  const handleEditStart = (taskId) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      setEditing(taskId);
+      setEditText(task.text);
+    }
+  };
+  
+  const handleEditCancel = () => {
+    setEditing(null);
+    setEditText('');
+  };
+  
+  const handleEditSave = async () => {
+    if (!user || !editing || !editText.trim()) return;
+    
+    try {
+      const taskRef = doc(db, `users/${user.uid}/tasks/${editing}`);
+      await updateDoc(taskRef, {
+        text: editText.trim().toUpperCase()
+      });
+      setEditing(null);
+      setEditText('');
+      setError(null);
+    } catch (error) {
+      console.error("Edit task error:", error);
+      setError("Failed to update task. Please try again.");
+    }
+  };
 
   const AppContent = () => {
     if (!user) {
@@ -160,7 +192,9 @@ const TodoApp = () => {
           >
             SIGN IN WITH GOOGLE
           </button>
-          <PWAInstall />
+          <div className="mt-6">
+            <PWAInstall />
+          </div>
           {error && <div className="text-red-500 text-sm">{error}</div>}
         </div>
       );
@@ -174,10 +208,10 @@ const TodoApp = () => {
     return (
       <div className="min-h-screen bg-white dark:bg-black transition-colors">
         <ThemeToggle />
-        <div className="p-6 pb-20 font-mono text-gray-800 dark:text-terminal-green">
-          <div className="max-w-md mx-auto">
+        <div className="p-6 pb-24 font-mono text-gray-800 dark:text-terminal-green">
+          <div className="max-w-md mx-auto px-4 sm:px-6">
             <div className="flex items-center justify-between mb-8 pr-10">
-              <div className="text-xs opacity-50">{user.email}</div>
+              <div className="text-xs opacity-50">Hey {user.displayName ? user.displayName.split(' ')[0].charAt(0).toUpperCase() + user.displayName.split(' ')[0].slice(1) : user.email}! 👋</div>
               <button
                 onClick={() => auth.signOut()}
                 className="text-xs opacity-50 hover:opacity-100"
@@ -194,13 +228,38 @@ const TodoApp = () => {
 
             <div className="space-y-4">
               {tasks.map((task) => (
-                <TodoItem key={task.id} task={task} onToggle={handleToggle} />
+                editing === task.id ? (
+                  <div key={task.id} className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      className="flex-grow bg-transparent border-b border-gray-800 dark:border-terminal-green 
+                        text-gray-800 dark:text-terminal-green text-sm focus:outline-none"
+                      autoFocus
+                    />
+                    <button 
+                      onClick={handleEditSave}
+                      className="text-xs text-gray-800 dark:text-terminal-green opacity-70 hover:opacity-100"
+                    >
+                      SAVE
+                    </button>
+                    <button 
+                      onClick={handleEditCancel}
+                      className="text-xs text-gray-800 dark:text-terminal-green opacity-70 hover:opacity-100"
+                    >
+                      CANCEL
+                    </button>
+                  </div>
+                ) : (
+                  <TodoItem key={task.id} task={task} onToggle={handleToggle} onEdit={handleEditStart} />
+                )
               ))}
             </div>
           </div>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 p-4 flex flex-col items-center">
+        <div className="fixed bottom-0 left-0 right-0 p-4 flex justify-center bg-white dark:bg-black shadow-md border-t border-gray-200 dark:border-gray-800">
           <button
             onClick={handleReset}
             disabled={isResetting || completedTasks === 0}
@@ -212,10 +271,6 @@ const TodoApp = () => {
           >
             {isResetting ? "[RESETTING...]" : "[CLEAR COMPLETED]"}
           </button>
-          
-          <div className="mt-4">
-            <PWAInstall />
-          </div>
         </div>
       </div>
     );
